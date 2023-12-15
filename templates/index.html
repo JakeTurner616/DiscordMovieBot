@@ -1,0 +1,56 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Config Editor</title>
+</head>
+<body>
+    <h1>Config Editor</h1>
+    <form id="configForm" method="post" action="{{ url_for('update_config') }}">
+        {% for section, keys in config.items() %}
+            <h3>{{ section }}</h3>
+            {% for key, value in keys.items() %}
+                {% if key in ['token', 'pass'] %}
+                    <label>{{ key }}:
+                        <input type="password" name="{{ section }}|{{ key }}" value="{{ value }}" id="{{ section }}_{{ key }}Input">
+                        <button type="button" onclick="togglePassword('{{ section }}_{{ key }}Input')">👁</button>
+                    </label><br>
+                {% else %}
+                    <label>{{ key }}:
+                        <input type="text" name="{{ section }}|{{ key }}" value="{{ value }}">
+                    </label><br>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+        <button type="button" onclick="saveConfig()">Save</button>
+    </form>
+
+    <script>
+        function togglePassword(inputId) {
+            var input = document.getElementById(inputId);
+            input.type = (input.type === 'password') ? 'text' : 'password';
+        }
+
+        function saveConfig() {
+            var form = document.getElementById('configForm');
+            var formData = new FormData(form);
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message || data.error || 'Config update failed');
+            })
+            .catch(error => {
+                console.error('Error updating config:', error);
+                alert('Config update failed');
+            });
+        }
+    </script>
+</body>
+</html>

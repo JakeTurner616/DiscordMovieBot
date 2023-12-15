@@ -46,67 +46,67 @@ Discord setup:
 
 ### Movie Commands
 
-- **/search <Movie Title>**
+- `/search <Movie Title>`
   - Searches the 1337x torrent search engine API and displays movie results as selectable embeds.
 
-- **/altsearch <Movie Title>**
+- `/altsearch <Movie Title>`
   - Searches the yts torrent search engine API and displays movie results as selectable embeds.
 
-- **/magnet <Magnet link> <category>**
+- `/magnet <Magnet link> <category>`
   - Manually adds a magnet link to the torrent client. Must include a torrent category.
 
-- **/delete**
+- `/delete`
   - Deletes all active torrents and all previous search result embeds.
 
 ### TV Show Commands
 
-- **/epsearch <TV Show Title>**
+- `/epsearch <TV Show Title>`
   - Searches for and displays an episode list for each season of a given TV show.
 
-- **/tvsearch <TV Show Title SnnEnn>**
+- `/tvsearch <TV Show Title SnnEnn>`
   - Searches a torrent search engine API and displays TV results as selectable embeds.
 
-- **/advtvsearch <Movie Title>**
+- `/advtvsearch <Movie Title>`
   - Searches torrent search engine on torrentdownload.info and displays TV results as selectable embeds.
 
-- **/status**
+- `/status`
   - Shows all active torrents and allows for individual deletion of torrents.
 
 ### Streaming and Download Commands
 
-- **/stream <query> <media_type> <optional download bool>**
+- `/stream <query> <media_type> <optional download bool>`
   - Generates a link to stream any movie or show with an optional argument for basic downloading logic.
 
-- **/youtube <YouTube title or link>**
+- `/youtube <YouTube title or link>`
   - Downloads a video from YouTube either from a link or through a search.
 
-- **/pbsdownload <video_url>**
+- `/pbsdownload <video_url>`
   - Downloads content from pbs.org or any PBS site.
 
-- **/booksearch <title> <fiction/non-fiction>**
+- `/booksearch <title> <fiction/non-fiction>`
   - Searches and downloads books from libgen.
 
-- **/simplebooksearch <title> **
+- `/simplebooksearch <title>`
   - Searches books from annas-archive without downloading them.
 
-- **/pdfdownload <link> <filename> **
+- `/pdfdownload <link> <filename>`
   - download books from a direct download link with a filename excluding the extension.
 
 ### Suggestion Commands
 
-- **/suggest <Genre>**
+- `/suggest <Genre>`
   - Suggests a random movie based on genre by calling an API.
 
-- **/aisuggest <Movie Title>**
+- `/aisuggest <Movie Title>`
   - Suggests a similar movie given a movie title by calling the g4f API.
 
-- **/pick <Movie Title>**
+- `/pick <Movie Title>`
   - Adds user picks to a queue.
 
-- **/diceroll <[optional int]d[int]>**
+- `/diceroll <[optional int]d[int]>`
   - Rolls dice based on user input and displays result.
  
 ### Debug Commands
 
-- **/debug**
+- `/debug`
   - Displays the debug menu.

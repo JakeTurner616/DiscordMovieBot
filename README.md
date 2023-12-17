@@ -55,8 +55,8 @@ Discord setup:
 - `/magnet <Magnet link> <category>`
   - Manually adds a magnet link to the torrent client. Must include a torrent category.
 
-- `/delete`
-  - Deletes all active torrents and all previous search result embeds.
+- `/delete <optional_delete_index>`
+  - Deletes either all active torrents or a select active torrent.
 
 ### TV Show Commands
 
@@ -69,7 +69,7 @@ Discord setup:
 - `/advtvsearch <Movie Title>`
   - Searches torrent search engine on torrentdownload.info and displays TV results as selectable embeds.
 
-- `/status`
+- `/status <optional_delete_index>`
   - Shows all active torrents and allows for individual deletion of torrents.
 
 ### Streaming and Download Commands
@@ -96,12 +96,6 @@ Discord setup:
 
 - `/suggest <Genre>`
   - Suggests a random movie based on genre by calling an API.
-
-- `/aisuggest <Movie Title>`
-  - Suggests a similar movie given a movie title by calling the g4f API.
-
-- `/pick <Movie Title>`
-  - Adds user picks to a queue.
 
 - `/diceroll <[optional int]d[int]>`
   - Rolls dice based on user input and displays result.

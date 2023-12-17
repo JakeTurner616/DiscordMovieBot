@@ -1,5 +1,3 @@
-
-
 import os
 import re
 import subprocess
@@ -133,14 +131,6 @@ def download_pbs():
 
     except Exception as e:
         return jsonify({"error": f"An error occurred during download: {str(e)}"}), 500
-
-
-
-
-
-
-
-
 
 def delete_all_torrents():
 
@@ -414,8 +404,6 @@ def scrape_image(link):
 
     return None
 
-
-
 def format_season_episode(query):
     # Define a regular expression pattern to match "SXEY" where X and Y are numbers
     pattern = r'S(\d{1,2})E(\d{1,2})'
@@ -516,11 +504,9 @@ def get_tv_torrents():
     
     return jsonify(torrents)
 
-
 from flask import Flask, request, jsonify
 import requests
 from bs4 import BeautifulSoup
-
 
 def scrape_with_selenium(search_query):
     try:
@@ -641,10 +627,7 @@ def advtv():
         return jsonify({"results": results}), 200
 
     else:
-        return jsonify({"error": "Failed to retrieve search results.", "status_code": response.status_code}), 500
-
-            
-
+        return jsonify({"error": "Failed to retrieve search results.", "status_code": response.status_code}), 500  
 
 def extract_fifth_url_from_bottom(source_url):
     try:
@@ -664,8 +647,6 @@ def extract_fifth_url_from_bottom(source_url):
     except Exception as e:
         return "N/A"
 
-
-
 def extract_magnet_link(source_url, index):
     try:
         response = requests.get(source_url)
@@ -678,9 +659,6 @@ def extract_magnet_link(source_url, index):
         return "N/A"
     except Exception as e:
         return "N/A"
-
-
-
 
 def extract_fifth_url_from_bottom(source_html):
     try:
@@ -778,8 +756,6 @@ def get_movie_cover_image(imdb_url):
         except requests.exceptions.RequestException as e:
             return f"Error: {str(e)}"
 
-
-
 def trim_string_after_year(input_string):
     # Define a regular expression pattern to match a year (4 consecutive digits).
     year_pattern = r'\d{4}'
@@ -798,7 +774,6 @@ def trim_string_after_year(input_string):
     else:
         # If no year is found, return the original string.
         return input_string
-
 
 def torrent_galaxy_local(source_html):
     base_url = 'https://torrentgalaxy.to'
@@ -831,14 +806,6 @@ def torrent_galaxy_local(source_html):
 
                 print(f"Cover Image URL: {cover_image_url}")
 
-                
-
-
-
-
-
-
-
                 result_list.append({
                     "title": title,
                     "link": individual_page_url,
@@ -866,23 +833,6 @@ def extract_seed_and_leech(sl_value):
         return seed_value, leech_value
     else:
         return "N/A", "N/A"
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
 
 # List of YTS mirrors sorted by availability
 yts_mirrors = [
@@ -950,14 +900,6 @@ def get_movie_url(movie_title, mirror):
             movie_url = movie_link['href']
             return movie_url
     return "Movie not found on YTS."
-    
-
-
-
-
-
-
-
 
 def get_magnet_link_seeds_size_cover(url):
     # Start a new instance of the Chrome web browser
@@ -1014,13 +956,6 @@ def get_magnet_link_seeds_size_cover(url):
 
     except Exception as e:
         raise
-
-
-
-
-
-
-
 
 @app.route('/selection', methods=['GET'])
 def get_selection():
@@ -1100,9 +1035,6 @@ def get_selection():
         else:
             return jsonify({"error": "Magnet link not found"}, 404)
 
-
-    
-
 @app.route('/setcategory', methods=['GET'])
 def set_category():
     url = request.args.get('url')
@@ -1130,7 +1062,6 @@ def set_category():
     
     return jsonify({"status": "No action taken"})
 
-
 @app.route('/info', methods=['GET'])
 def get_torrent_info():
     infohash = request.args.get('infohash')
@@ -1147,7 +1078,6 @@ def get_torrent_info():
     except requests.exceptions.HTTPError as e:
         return jsonify({"error": str(e)}), 404
 
-
 def delete_permanently(infohash_list):
     qb.delete_permanently(infohash_list)
 
@@ -1160,7 +1090,6 @@ def delete_file(infohash):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-
 #delete all
 @app.route('/delete', methods=['GET'])
 def delete_torrents_route():
@@ -1172,9 +1101,6 @@ def delete_torrents_route():
         return jsonify({'message': 'All torrents deleted successfully.'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-    
-
-
 
 @app.route('/spellcheck', methods=['GET'])
 def spellcheck():
@@ -1203,17 +1129,12 @@ def spellcheck():
     else:
         return jsonify({'error': 'Failed to fetch data from IMDb API'}), 500
 
-
-
-
-
 @app.route('/getipaddr', methods=['GET'])
 def before_first_request():
     ip = get('https://api.ipify.org').content.decode('utf8')
 
     print('My public IP address is: {}'.format(ip))
     return jsonify('{}'.format(ip))
-
 
 @app.route('/infoglobal', methods=['GET'])
 def get_filtered_torrents():
@@ -1234,11 +1155,6 @@ def get_filtered_torrents():
             return jsonify({"error": "Torrent list not available"}), 404
     except requests.exceptions.HTTPError as e:
         return jsonify({"error": str(e)}), 404
-    
-
-
-
-
 
 download_url = None
 download_progress = 0
@@ -1350,8 +1266,6 @@ def search_and_download():
     # If no selection index is provided, return the list of search results
     return jsonify({'status': 'success', 'results': results})
 
-
-
 def download_video(video_url):
     global download_progress, download_in_progress
 
@@ -1383,14 +1297,6 @@ def progress_callback(stream, chunk, bytes_remaining):
     # Your custom logic for progress reporting
     download_progress = int((1 - bytes_remaining / stream.filesize) * 100)
     print(f'Download progress: {download_progress}%')
-
-    
-
-
-
-
-
-
 
 def download_file(video_src, media_name, folder):
     # Create the folder if it doesn't exist
@@ -1482,13 +1388,6 @@ def download_stream():
 
     return jsonify({"success": "File download initiated"}), 200
 
-
-
-
-
-
-
-
 # List of mirrors to try
 MIRRORS = ["https://annas-archive.org/", "https://annas-archive.gs", "https://annas-archive.se"]
 
@@ -1547,8 +1446,6 @@ def scrape_books():
         link_element = result.find('a')
         link = f"{base_url}" + link_element['href'] if link_element else "Link not found"
 
-
-
         print(f"Processing book {index + 1}: {link}")
 
         # Extract other details like title, format, author, etc.
@@ -1583,7 +1480,6 @@ def scrape_books():
                         cleanedurl = item['url'].replace('https://annas-archive.org/','')
                         item['url'] = cleanedurl
 
-
         # Append the results to the list
         book_result = {
             'index': index + 1,
@@ -1598,10 +1494,8 @@ def scrape_books():
         if not index_param or int(index_param) == (index + 1):
             book_results.append(book_result)
 
-
     # Return the results as JSON
     return jsonify({'books': book_results})
-
 
 # List of libgen mirrors
 lib_mirrors = [
@@ -1613,9 +1507,6 @@ lib_mirrors = [
     'http://91.229.23.48/',
     'http://141.148.234.41/'
 ]
-
-
-
 
 def scrape_libgen(search_query):
     # Set up the Selenium WebDriver
@@ -1672,7 +1563,6 @@ def scrape_libgen(search_query):
 
     return data
 
-
 def extract_libgen_image_link(url):
     try:
         # Fetch the HTML content of the given URL
@@ -1702,8 +1592,6 @@ def extract_libgen_image_link(url):
     except Exception as e:
         print(f"Error extracting image link: {e}")
         return None
-
-
 
 @app.route('/libgen/<search_query>', methods=['GET'])
 def libgen(search_query):
@@ -1763,7 +1651,6 @@ def libgen_download():
             return jsonify(result)
     
     return jsonify({'status': 'error', 'message': 'All mirrors failed'})
-
 
 def extract_libgen_book_info(soup):
     # Extract book information from the detailed page
@@ -1862,12 +1749,5 @@ def libgen_fiction_search(search_query):
 
     return jsonify({'error': 'All mirrors failed'})
 
-
-
-
-
-
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
-
-
+    app.run(debug=False, host='0.0.0.0')

@@ -21,7 +21,5 @@ Levenshtein
 discord
 python-qbittorrent
 nest-asyncio
-discord-ext-menus
-py-cord
-git+https://github.com/Rapptz/discord-ext-menus#egg=discord-ext-menus
 git+https://github.com/Pycord-Development/pycord#egg=py-cord
+git+https://github.com/Rapptz/discord-ext-menus#egg=discord-ext-menus

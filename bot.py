@@ -1,4 +1,3 @@
-
 import asyncio
 import configparser
 import platform
@@ -282,143 +281,65 @@ def humanize_data(url):
             "Hash": download_info["hash"]
         }
     return humanized_data
-class TorrentButtons(discord.ui.View):
-    def __init__(self, downloads):
-        super().__init__()
-        self.downloads = downloads
-    async def callback(self, button: discord.ui.Button, interaction: discord.Interaction):
-        # Parse the custom_id to get the download index
-        download_index = int(button.custom_id.split('_')[1])
-        # Fetch the corresponding hash based on the index
-        hash_to_delete = self.downloads[download_index - 1]["Hash"]
-        # Delete the torrent using Flask route
-        delete_url = f'http://127.0.0.1:5000/delete/{hash_to_delete}'
-        requests.delete(delete_url)
-        # Respond to the button click
-        await interaction.response.edit_message(content=f"Download {download_index} deleted successfully.", view=self)
+# Define the URL of the Flask API
+API_EP_URL = "http://127.0.0.1:5000/episodes"
+# Dictionary to store searched titles for each user
+searched_titles = {}
 
 @bot.slash_command(name="status", description="Get download information", guild_ids=guilds_list)
-async def status(ctx: discord.Interaction):
+async def status(ctx: discord.Interaction, delete_torrent_index: int = None):
     try:
-    # Check the status from http://127.0.0.1:5000/infoglobal to see of a download is in progress upon bot start
+        # Check the status from http://127.0.0.1:5000/infoglobal to see if a download is in progress upon bot start
         url = 'http://127.0.0.1:5000/infoglobal'
         response = requests.get(url)
-        
+
         if response.status_code == 200:
             data = response.json()
             if data:  # Check if the response is not empty
-                torrent_name = data[0].get("name", "") # we should NEVER get an empty response here
-                await bot.change_presence(activity=discord.Game(name=f'qBittorrent API - Downloading: {torrent_name}'), status=discord.Status.idle)
+                torrent_name = data[0].get("name", "")
+                await bot.change_presence(activity=discord.Game(name=f'qBittorrent API - Downloading: {torrent_name}'),
+                                          status=discord.Status.idle)
             else:
                 await bot.change_presence(activity=None)
         else:
-            print(f'Error fetching data from {url}') 
+            print(f'Error fetching data from {url}')
+        
         data = requests.get(url).json()
-        # Check the number of active downloads
         num_downloads = len(data)
-        # Create an embed
-        embed = discord.Embed(
-            color=discord.Color.green()
-        )
-        # Set the title and description
+        embed = discord.Embed(color=discord.Color.green())
         title = f"{num_downloads} download{'s' if num_downloads != 1 else ''} currently active"
         embed.title = title
-        # Add the humanized data to the embed
+
         for index, download_info in enumerate(data):
-            # Humanize Download Time
             download_time_seconds = int(download_info['time_active'])
-            download_time_readable = str(datetime.timedelta(seconds=download_time_seconds))
-            # Humanize Progress Percentage
             progress_percentage = float(download_info['progress']) * 100
             progress_percentage_readable = f"{progress_percentage:.2f}%"
             embed.add_field(
                 name=f"Download {index + 1}: {download_info['name']}",
                 value=f"Category: {download_info['category']}\n"
-                      f"Download Time: {download_time_readable}\n"
+                      f"Download Time: {download_time_seconds}\n"
                       f"Progress Percentage: {progress_percentage_readable}\n"
                       f"Hash: {download_info['hash']}",
                 inline=False
             )
-        # Create a view with buttons for each download
-        view = TorrentButtons(downloads=data)
-        # Add buttons for each download
-        for i, download_info in enumerate(data):
-            button_label = f"Delete {i + 1}"
-            button = discord.ui.Button(style=discord.ButtonStyle.red, label=button_label, custom_id=f"delete_{i + 1}")
-            view.add_item(button)
-        # Send the message with the embed and buttons
-        await ctx.respond(embed=embed, view=view, ephemeral=True)
+        
+        # Check if the user provided a delete_torrent_index
+        if delete_torrent_index is not None and 1 <= delete_torrent_index <= num_downloads:
+            # Perform the delete operation here using the index
+            hash_to_delete = data[delete_torrent_index - 1]["hash"]
+            delete_url = f'http://127.0.0.1:5000/delete/{hash_to_delete}'
+            requests.delete(delete_url)
+            await ctx.respond(content=f"Download {delete_torrent_index} deleted successfully.", ephemeral=True)
+        else:
+            # Create a message with the embed
+            await ctx.respond(embed=embed, ephemeral=True)
     except Exception as e:
-        # If an exception occurs, send an ephemeral error embed
         error_embed = discord.Embed(
             title="Error",
             description=f"An error occurred: {e}",
             color=discord.Color.red()
         )
         await ctx.respond(embed=error_embed, ephemeral=True)
-# Define the URL of the Flask API
-API_EP_URL = "http://127.0.0.1:5000/episodes"
-# Dictionary to store searched titles for each user
-searched_titles = {}
-
-@bot.slash_command(name="epsearch", description="Search for TV show episodes", guild_ids=guilds_list)
-async def epsearch(ctx, 
-                  title: Option(str, description="Specify the title of the TV show you want to search for.", required=True)):
-    # Create an initial loading embed
-    loading_embed = discord.Embed(title="Loading...", color=0x4287f5)
-    loading_message = await ctx.respond(embed=loading_embed, ephemeral=False)
-    # Format the title for URL encoding
-    formatted_title = quote(title)
-    # Store the searched title in the dictionary, using the user's Discord ID as the key
-    searched_titles[ctx.author.id] = title
-    # Make a request to the Flask API with the formatted title
-    response = requests.get(f"{API_EP_URL}?title={formatted_title}")
-    if response.status_code == 200:
-        data = response.json()
-        if "show_info" in data:
-            show_info = data["show_info"]
-            if not show_info:
-                await loading_message.delete()  # Remove the loading embed
-                await ctx.send("No TV show results found.")
-                return
-            # Automatically select the first result (index 0)
-            selection = 0
-            title = searched_titles.get(ctx.author.id, "")
-            url = show_info[selection]["url"]
-            # Make a request to the Flask API with the title and selection
-            response = requests.get(f"{API_EP_URL}?title={title}&selection={selection}", timeout=100)
-            if response.status_code == 200:
-                data = response.json()
-                if "episode_names" in data:
-                    episode_names = data["episode_names"]
-                    # Split episodes into chunks of 25
-                    chunk_size = 25
-                    chunked_episodes = [episode_names[i:i + chunk_size] for i in range(0, len(episode_names), chunk_size)]
-                    dropdown_views = []
-                    for chunk in chunked_episodes:
-                        options = [
-                            discord.SelectOption(label=episode, value=episode)
-                            for episode in chunk
-                        ]
-                        placeholder = f''
-                        dropdown = EpisodeDropdown(options, placeholder, ctx, title)
-                        view = discord.ui.View()
-                        view.add_item(dropdown)
-                        dropdown_views.append(view)
-                    for view in dropdown_views:
-                        await ctx.send("", view=view)
-                else:
-                    await loading_message.delete()  # Remove the loading embed
-                    await ctx.send("No episode names found for the selected TV show.")
-            else:
-                await loading_message.delete()  # Remove the loading embed
-                await ctx.send(f"Failed to retrieve episode names. Status code: {response.status_code}")
-        else:
-            await loading_message.delete()  # Remove the loading embed
-            await ctx.send("No TV show results found.")
-    else:
-        await loading_message.delete()  # Remove the loading embed
-        await ctx.send(f"Failed to retrieve TV show data. Status code: {response.status_code}")
 # Define the IMDb API route
 imdb_api_url = f'{API_URL}/spellcheck'
 def get_first_movie_title(search_query):
@@ -891,12 +812,11 @@ async def slash_command(interaction: discord.Interaction):
     # Send the embed as a message in response to the interaction
     await interaction.response.send_message(embed=embed) 
 
-@bot.slash_command(name="delete", description="Delete all active torrents search result emebds", guild_ids=guilds_list
-)
-async def delete(ctx):
+@bot.slash_command(name="delete", description="Delete all active torrents search result emebds", guild_ids=guilds_list)
+async def delete(ctx: discord.Interaction, delete_torrent_index: int = None):
     print("DELETE LOGIC HAS BEEN FIRED")
     await bot.change_presence(status=discord.Status.online, activity=None)
-    
+
     global download_in_progress  # Declare the global variable and make it accessible
     # Check if a download is in progress, and if so, set it to False
     if download_in_progress:
@@ -921,20 +841,43 @@ async def delete(ctx):
                 continue
             else:
                 await message.delete()
-    # Make the HTTP request to delete torrents
-    delete_url = 'http://127.0.0.1:5000/delete'
-    delete_response = requests.get(delete_url)
-    try:
-        delete_content = delete_response.json().get('message', 'No message found in response.')
-    except ValueError:
-        delete_content = 'Invalid JSON response.'
+    
+    # Check if the user provided a delete_torrent_index
+    if delete_torrent_index is not None:
+        # Fetch the corresponding hash based on the index
+        url = 'http://127.0.0.1:5000/infoglobal'
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            data = response.json()
+            if 0 < delete_torrent_index <= len(data):
+                hash_to_delete = data[delete_torrent_index - 1]["hash"]
+                # Delete the torrent using the Flask route
+                delete_url = f'http://127.0.0.1:5000/delete/{hash_to_delete}'
+                requests.delete(delete_url)
+                # Respond with the success message
+                success_message = f"Download {delete_torrent_index} deleted successfully."
+            else:
+                success_message = f"Invalid index: {delete_torrent_index}. No corresponding download found."
+        else:
+            success_message = f'Error fetching data from {url}'
+    else:
+        # Make the HTTP request to delete all torrents
+        delete_url = 'http://127.0.0.1:5000/delete'
+        delete_response = requests.get(delete_url)
+        try:
+            success_message = delete_response.json().get('message', 'No message found in response.')
+        except ValueError:
+            success_message = 'Invalid JSON response.'
+
     # Create an embed with the delete response content
     embed = discord.Embed(
-        title=delete_content,
+        title=success_message,
         color=discord.Color.green()
     )
     # Respond with the embed as a direct response to the slash command
     await ctx.respond(embed=embed, ephemeral=False)
+
 # Define a global variable to track whether a download is in progress
 download_in_progress = False
 
@@ -1437,9 +1380,6 @@ async def pbsdownload(ctx: discord.Interaction, video_url: Option(str, descripti
     except Exception as e:
         traceback.print_exc()
         await bot.change_presence(activity=None)
-        # Follow-up response on unexpected error
-        #embed_error = discord.Embed(title="Error",description=f"An unexpected error occurred: {str(e)}",color=discord.Color.red())
-        #await initial_response.followup.send(embed=embed_error)
         pass
 
 # Define list of commands
@@ -1847,24 +1787,6 @@ async def tvsuggest(ctx, genre: str = Option(description="Specify the genre for 
                                 break
                             else:
                                 await ctx.respond("There is no suggestion to add to the blacklist.", ephemeral=False)
-def save_data(data):
-    with open('pick_data.txt', 'w') as file:
-        file.write('\n'.join(data))
-def load_data():
-    try:
-        with open('pick_data.txt', 'r') as file:
-            data = file.read().splitlines()
-        return data
-    except FileNotFoundError:
-        return []
-pick_queue = load_data()
-
-@bot.command()
-async def pick(ctx, *, text):
-    """Add a pick to the queue."""
-    pick_queue.append(f"{ctx.author.name}: {text}")
-    save_data(pick_queue)
-    await ctx.message.add_reaction('✅')
 
 @bot.slash_command(
     name="diceroll",

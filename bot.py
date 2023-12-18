@@ -1636,7 +1636,7 @@ async def suggest(ctx, genre: Option(str, description="Specify the genre for Mov
                         elif str(reaction.emoji) == "🏴‍☠️":
                             if most_recent_suggestion:
                                 # Add the movie title to the pirate blacklist
-                                await search(ctx, search_query=most_recent_suggestion['title'] + element)
+                                await search(ctx, title=result + element)
                                 break
                     # Clear the most recent suggestion after the user's action
                     most_recent_suggestion = None

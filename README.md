@@ -7,19 +7,17 @@ DiscordMoviebot is a Discord bot that aims to provide a complete set of tools fo
 ## Pre-Install Setup
 qBittorrent setup:
 
-1) Make sure qBittorrent WebUI access with authentication is set up on the seedbox:
+1) Ensure that qBittorrent WebUI access with authentication is configured on the seedbox, as sessions are managed automatically since [@8992c](https://github.com/JakeTurner616/DiscordMovieBot/commit/8992c8a2d2ff3434781b366aa3e9897d12699645).
 
-2) Setup an authentication bypass for the host running the bot by adding to the qbittorrent auth whitelist or checking the bypass auth on localhost box if the bot is running on the seedbox.
+3) Include qBittorrent categories for each media type that can be torrented: "movie", "tv", "fitgirl repack" each with a specified path to their desired download location. Take note of the movie and TV paths you choose here as they will be required when configuring the local `config.ini` variables.
 
-3) Add qBittorrent categories for each media type that can be torrented: "movie", "tv", "fitgirl repack" each with a path their desired download location. Note the movie and tv paths as they will be needed when setting configuration values later.
+Discord bot setup:
 
-Discord setup:
-
-1) Create a bot token on the discord dev portal, and enable message content intents.
+1) Create a bot via the Discord developer portal making sure to enable message content intents.
    
-3) Go to the OAuth URL generation page and give the bot the "bot" scope and all necessary permissions to send messages, reactions, embeds, read messages, embed links, add slash commands, and manage messages. Invite the bot to a server.
+3) Go to the OAuth URL generation page and give the bot the "bot" scope and all necessary permissions to send messages, reactions, embeds, read messages, embed links, add slash commands, and manage messages. Simply invite the bot to a server.
 
-## Installation
+## DiscordMovieBot Installation
 
 1) Setup a venv:
   `python -m venv discordmoviebot`
@@ -35,8 +33,7 @@ Discord setup:
 3) Install the requirements:
    `pip install -r requirements.txt`
 
-4) Customize configuration values within `config.ini`
-     - Make sure the tv and movie save paths are the same as were set in the qBittorrent categories.
+4) Customize local configuration values within `config.ini`.
 
 # Deploying
 

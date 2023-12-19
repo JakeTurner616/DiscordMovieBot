@@ -821,26 +821,6 @@ async def delete(ctx: discord.Interaction, delete_torrent_index: int = None):
     # Check if a download is in progress, and if so, set it to False
     if download_in_progress:
         download_in_progress = False
-    # Delete all previous messages in the channel
-    async for message in ctx.channel.history(limit=200):
-        if message.embeds:
-            embed = message.embeds[0]
-            if (
-                embed.title and (
-                    embed.title.startswith("Download completed") or
-                    embed.title.startswith("Movie suggestion") or
-                    embed.title.startswith("Error:") or
-                    embed.title.startswith("Episode Names") or
-                    embed.title.startswith("Searching for") or
-                    embed.title.startswith("Search result for the") or
-                    embed.title.startswith("Searching for the") or
-                    embed.title.endswith(")")
-                )
-            ):
-                # Message meets one of the specified conditions, so we ignore it
-                continue
-            else:
-                await message.delete()
     
     # Check if the user provided a delete_torrent_index
     if delete_torrent_index is not None:
@@ -880,7 +860,8 @@ async def delete(ctx: discord.Interaction, delete_torrent_index: int = None):
 
 # Define a global variable to track whether a download is in progress
 download_in_progress = False
-
+# The maximum number of allowed failures
+max_metadata_failure_count = 100
 @bot.slash_command(name="magnet", description="Download a torrent from a magnet link.", guild_ids=guilds_list)
 async def magnet(ctx, 
                 magnet_link: Option(str, description="Specify the magnet link.", required=True),
@@ -905,6 +886,7 @@ async def magnet(ctx,
             return
         # Set the flag to indicate that a download is in progress
         download_in_progress = True
+        await login_command(ctx)
         qb.download_from_link(magnet_link, category=category)
         if category == "movie":
             category = "Movie"
@@ -1032,6 +1014,28 @@ async def magnet(ctx,
         print(f"An error occurred: {e}")
         # Reset the flag when an error occurs
         download_in_progress = False
+
+@bot.command(name='login', help='Log into the qb session')
+async def login_command(ctx): 
+    try:
+
+        qb.login(qb_user, qb_pass) 
+        print('qb session refreshed!')
+    except Exception as e:
+        print(f"An error occurred during qb login: {e}")
+        print(f"An error occurred during qb login: {str(e)}")
+
+@bot.command(name='logout', help='Log out of the qb session')
+async def logout_command(ctx):
+    try:
+        # Call qb.logout or perform any other necessary cleanup
+        qb.logout()
+        await ctx.send('Logged out and disconnected qb session')
+    except Exception as e:
+        print(f"An error occurred during qb logout: {e}")
+        await ctx.send(f"An error occurred during qb logout: {str(e)}")
+
+
 LIBGEN_SEARCH_ROUTE = '/libgen'
 LIBGEN_FICTION_SEARCH_ROUTE = '/libgen_fiction_search'
 # Emoji for the book embeds

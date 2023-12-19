@@ -4,6 +4,11 @@
 
 DiscordMoviebot is a Discord bot that aims to provide a complete set of tools for searching torrents, managing torrents, and streaming media to a discord server. The bot can connect to a qbittorrent seedbox and can utilize various torrent search engine APIs and offers features for finding and downloading both movies and TV shows in a convenient interface. Additionally, it includes functionality for downloading content from across the internet: YouTube, PBS, Libgen, and more.
 
+
+<p align="center">
+  <img src="https://github.com/JakeTurner616/DiscordMovieBot/raw/807170d8301014c7da00fb4b59a10a9fd6aeacf2/docs/demo0.gif" alt="/search demo">
+</p>
+
 ## Pre-Install Setup
 qBittorrent setup:
 

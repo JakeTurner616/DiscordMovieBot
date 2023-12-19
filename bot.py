@@ -1164,9 +1164,16 @@ async def on_reaction_add(reaction, user):
     if user.id in search_responses:
         data = search_responses[user.id]
         print(f"User {user} reacted with {reaction.emoji} to a message.")
-        for item in data:
-            #print(f"item fired!")
-            if reaction.message.embeds and reaction.message.embeds[0].title == item['title']:
+    def clean_title(title):
+        # Remove non-alphanumeric characters and extra spaces
+        return re.sub(r'[^a-zA-Z0-9\s]', '', title).strip()
+
+    for item in data:
+        print(f"Checking item: {item['title']}")
+        for embed in reaction.message.embeds:
+            embed_title = clean_title(embed.title) if embed.title else "No title"
+            print(f"Embed title: {embed_title}")
+            if clean_title(embed_title.lower()) == clean_title(item['title'].lower()):
                 api_url = f'http://127.0.0.1:5000/selection?url={item["link"]}'
                 print(item)
                 response = requests.get(api_url).json()

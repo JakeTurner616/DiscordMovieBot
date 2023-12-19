@@ -37,8 +37,18 @@ qb_host = config.get('qbit', 'host')
 qb = Client(qb_host)
 qb_user = config.get('qbit', 'user')
 qb_pass = config.get('qbit', 'pass')
+# Inital login
 qb.login(qb_user, qb_pass) 
 app = Flask(__name__)
+
+async def login_command(): 
+    try:
+
+        qb.login(qb_user, qb_pass) 
+        print('qb session refreshed!')
+    except Exception as e:
+        print(f"An error occurred during qb login: {e}")
+        print(f"An error occurred during qb login: {str(e)}")
 
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36"
@@ -132,12 +142,7 @@ def download_pbs():
     except Exception as e:
         return jsonify({"error": f"An error occurred during download: {str(e)}"}), 500
 
-def delete_all_torrents():
 
-    
-    torrents = qb.torrents()
-    for torrent in torrents:
-        qb.delete_permanently(torrent['hash'])
 
 
 from selenium.webdriver.common.action_chains import ActionChains
@@ -958,7 +963,7 @@ def get_magnet_link_seeds_size_cover(url):
         raise
 
 @app.route('/selection', methods=['GET'])
-def get_selection():
+async def get_selection():
     url = request.args.get('url')
     if not url:
         return jsonify({"error": "Missing 'url' parameter"}, 400)
@@ -967,6 +972,7 @@ def get_selection():
 
     if url.startswith("magnet:"):
         # If the URL is a magnet link, send it to the torrent client with "tv" as the category
+        await login_command()
         qb.download_from_link(url, category="tv")
         return jsonify({"status": "Torrent download initiated"})
 
@@ -989,7 +995,8 @@ def get_selection():
                 break
 
         if magnet_link:
-            # Download the torrent using qBittorrent API (implement your download logic)
+            # Download the torrent using qBittorrent API
+            await login_command()
             qb.download_from_link(magnet_link)
             return jsonify({"status": "Torrent download initiated"})
         else:
@@ -1029,6 +1036,7 @@ def get_selection():
             magnet_link = magnet_link_match.group()
 
             # Download the torrent using qBittorrent API (implement your download logic)
+            await login_command()
             qb.download_from_link(magnet_link, category=category)
 
             return jsonify({"status": "Torrent download initiated"})
@@ -1036,7 +1044,7 @@ def get_selection():
             return jsonify({"error": "Magnet link not found"}, 404)
 
 @app.route('/setcategory', methods=['GET'])
-def set_category():
+async def set_category():
     url = request.args.get('url')
     if not url:
         return jsonify({"error": "Missing 'url' parameter"}), 400
@@ -1057,18 +1065,20 @@ def set_category():
             infohash_span = soup.select('.infohash-box > p:nth-child(1) > span:nth-child(2)')
             if infohash_span:
                 infohash = infohash_span[0].text.strip()
+                await login_command()
                 qb.set_category(infohash, "TV")
                 return jsonify({"status": f"Category set to 'TV' for infohash: {infohash}"})
     
     return jsonify({"status": "No action taken"})
 
 @app.route('/info', methods=['GET'])
-def get_torrent_info():
+async def get_torrent_info():
     infohash = request.args.get('infohash')
     if not infohash:
         return jsonify({"error": "Missing 'infohash' parameter"}), 400
 
     try:
+        await login_command()
         torrent_info = qb.get_torrent(infohash)
 
         if torrent_info:
@@ -1078,7 +1088,8 @@ def get_torrent_info():
     except requests.exceptions.HTTPError as e:
         return jsonify({"error": str(e)}), 404
 
-def delete_permanently(infohash_list):
+async def delete_permanently(infohash_list):
+    await login_command()
     qb.delete_permanently(infohash_list)
 
 @app.route('/delete/<infohash>', methods=['DELETE'])
@@ -1092,10 +1103,12 @@ def delete_file(infohash):
 
 #delete all
 @app.route('/delete', methods=['GET'])
-def delete_torrents_route():
+async def delete_torrents_route():
     try:
-        # Attempt to delete torrents
-        delete_all_torrents()
+        await login_command()
+        torrents = qb.torrents()
+        for torrent in torrents:
+            qb.delete_all()
         
         # If deletion is successful, return a success message
         return jsonify({'message': 'All torrents deleted successfully.'}), 200
@@ -1137,7 +1150,7 @@ def before_first_request():
     return jsonify('{}'.format(ip))
 
 @app.route('/infoglobal', methods=['GET'])
-def get_filtered_torrents():
+async def get_filtered_torrents():
     try:
         # Define your filter parameters based on your requirements
         filters = {
@@ -1146,7 +1159,7 @@ def get_filtered_torrents():
             'limit': 10,               # Limit the number of torrents returned
             'offset': 0               # Set offset (if needed)
         }
-        
+        await login_command()
         torrent_list = qb.torrents(**filters)
 
         if isinstance(torrent_list, list):

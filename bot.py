@@ -585,7 +585,25 @@ async def stream(
             final_link = r"https://" + result_link.replace(mirror_list[0], 'movie.serverboi.org/#')
             print(f"final link: {final_link}")
             # Create an embed with the final link
-            embed = discord.Embed(title=f"Search result for the {media_type}: \"{title}\"", description=f"\nClick [here]({final_link.replace('movie.serverboi.org/#', 'movie-web.app')}) to view the online stream.", color=discord.Color.blue())
+            embed = discord.Embed(
+                title=f"Search result for {media_type}: \"{title}\"",
+                color=discord.Color.blue()
+            )
+
+            streams = [
+                {"name": "Main: (movie-web.app)", "link": final_link.replace('movie.serverboi.org/#', 'movie-web.app')},
+                {"name": "Mirror: (movie.serverboi.org)", "link": final_link},
+                {"name": "Mirror: (movie-web-lac.vercel.app)", "link": final_link.replace('movie.serverboi.org/#', 'movie-web-lac.vercel.app/#')},
+                {"name": "Mirror: (h-matheo-github-io.vercel.app)", "link": final_link.replace('movie.serverboi.org/#', 'h-matheo-github-io.vercel.app/#')},
+                {"name": "Mirror: (watch.testersquad.tk)", "link": final_link.replace('movie.serverboi.org/#', 'watch.testersquad.tk/#')}
+            ]
+
+            for stream in streams:
+                embed.add_field(
+                    name=stream["name"],
+                    value=f"Click [here]({stream['link']}) to view the online stream.",
+                    inline=False
+                )
             embed.set_thumbnail(url="https://raw.githubusercontent.com/JakeTurner616/stream-app/main/android-chrome-512x512.png")
             # Send a follow-up message with the final link and image
             await ctx.followup.send(embed=embed)

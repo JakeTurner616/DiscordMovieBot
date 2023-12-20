@@ -524,8 +524,6 @@ async def stream(
         description="Specify the title",
         required=True,
     ),
-    
-    # Description: "Title of the series or movie to search for."
     media_type: Option(
         str,
         description="Specify the media type",
@@ -540,7 +538,7 @@ async def stream(
     )
 ):
     final_link = None  # Initialize to None
-    # Check if the query is a valid URL using regex
+
     if re.match(r'^https?://', title):
         final_link = title
         
@@ -563,28 +561,23 @@ async def stream(
             error_embed = discord.Embed(title="Error", description="All mirrors are unreachable.", color=discord.Color.red())
             await ctx.respond(embed=error_embed)
             return
+
         chrome_options = Options()
         chrome_options.add_argument("--headless")
         chrome_options.add_argument("--disable-gpu")
         driver = webdriver.Chrome(options=chrome_options)
         embed = discord.Embed(title=f"Searching for the {media_type} \"{title}\"...", color=discord.Color.blue())
-        response_msg = await ctx.respond(embed=embed)
+
+        await ctx.defer()
         try:
-            # Open the search link in the browser
             driver.get(search_link)
-            print(f"search link: {search_link}")
-            # Wait for the element with the specific CSS selector to be present on the page
             WebDriverWait(driver, 10).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, '.grid > a'))
             )
-            # Find the element with the specific CSS selector
             specific_element = driver.find_element(By.CSS_SELECTOR, '.grid > a')
-            # Get the href attribute of the element
             result_link = specific_element.get_attribute('href')
-            # Combine the result link with the base URL
             final_link = r"https://" + result_link.replace(mirror_list[0], 'movie.serverboi.org/#')
-            print(f"final link: {final_link}")
-            # Create an embed with the final link
+            
             embed = discord.Embed(
                 title=f"Search result for {media_type}: \"{title}\"",
                 color=discord.Color.blue()
@@ -605,18 +598,14 @@ async def stream(
                     inline=False
                 )
             embed.set_thumbnail(url="https://raw.githubusercontent.com/JakeTurner616/stream-app/main/android-chrome-512x512.png")
-            # Send a follow-up message with the final link and image
             await ctx.followup.send(embed=embed)
         except NoSuchElementException:
-            # Handle the case when the page elements cannot be found
             error_embed = discord.Embed(title="Error", description="Page elements not found.", color=discord.Color.red())
             await ctx.followup.send(embed=error_embed)
         except TimeoutException:
-            # Handle the case when the page cannot be reached within the timeout
             error_embed = discord.Embed(title="Error", description="No results found.", color=discord.Color.red())
             await ctx.followup.send(embed=error_embed)
         except StaleElementReferenceException:
-            # Handle the case when the page cannot be reached within the timeout
             error_embed = discord.Embed(title="Error", description="Element is no longer valid, a StaleElementReferenceException has been raised indicating that the reference to the element is now stale or outdated.", color=discord.Color.red())
             await ctx.followup.send(embed=error_embed)
         except ElementNotInteractableException:
@@ -632,12 +621,10 @@ async def stream(
             error_embed = discord.Embed(title="Error", description=f"WebDriverException: {str(e)}", color=discord.Color.red())
             await ctx.followup.send(embed=error_embed)
         finally:
-            # Ensure the WebDriver is closed after usage
             driver.quit()
-    # Check if download is requested and final_link is not None
-    if download and final_link is not None:
-        # Use the Discord bot function to initiate the file download
-        download_file_discord(final_link)
+
+        if download and final_link is not None:
+            download_file_discord(final_link)
 # Existing function to initiate download via Flask route
 def download_file_discord(final_link):
     flask_route_url = 'http://127.0.0.1:5000/download_stream?url=' + final_link

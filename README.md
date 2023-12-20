@@ -1,13 +1,24 @@
 # DiscordMoviebot - Ultimate content searching, suggestion, acquisition and organization system. 
 
-## Overview
+DiscordMoviebot is a Discord bot designed to help users with an extensive set of functionalities encompassing torrent and online stream searches and torrent management all directly within a Discord server. The bot seamlessly integrates with a qbittorrent seedbox, leveraging a diverse set torrent search engine APIs. It provides users with a user-friendly interface for easily discovering and acquiring both movies and TV shows directly to a seedbox. Additionally, it expands its capabilities to facilitate the download of content from various online sources such as YouTube, PBS, Libgen, and even direct download URLs making content acquisition very straightforward.
 
-DiscordMoviebot is a Discord bot that aims to provide a complete set of tools for searching torrents, managing torrents, and streaming media to a discord server. The bot can connect to a qbittorrent seedbox and can utilize various torrent search engine APIs and offers features for finding and downloading both movies and TV shows in a convenient interface. Additionally, it includes functionality for downloading content from across the internet: YouTube, PBS, Libgen, and more.
+#
+
+<div style="text-align: center;">
+  <div style="display: inline-block; margin-right: 20px;">
+    <p>Using /search to find movie/series torrents:</p>
+      <img src="https://github.com/JakeTurner616/DiscordMovieBot/raw/807170d8301014c7da00fb4b59a10a9fd6aeacf2/docs/demo0.gif" alt="/search demo">
 
 
-<p align="center">
-  <img src="https://github.com/JakeTurner616/DiscordMovieBot/raw/807170d8301014c7da00fb4b59a10a9fd6aeacf2/docs/demo0.gif" alt="/search demo">
-</p>
+  </div>
+  
+#
+
+  <div style="display: inline-block;">
+    <p>Using /stream to find online movie/series streams</p>
+      <img src="https://github.com/JakeTurner616/DiscordMovieBot/blob/e9ee7c7a065fe25e0bff433976f7bd7346adc440/docs/demo2.gif" alt="/stream demo">    
+  </div>
+</div>
 
 ## Pre-Install Setup
 qBittorrent setup:

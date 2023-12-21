@@ -1,6 +1,6 @@
 # DiscordMoviebot - Ultimate content searching, suggestion, acquisition and organization system. 
 
-DiscordMoviebot is a Discord bot designed to help users with an extensive set of functionalities encompassing torrent and online stream searches and torrent management all directly within a Discord server. The bot seamlessly integrates with a qbittorrent seedbox, leveraging a diverse set torrent search engine APIs. It provides users with a user-friendly interface for easily discovering and acquiring both movies and TV shows directly to a seedbox. Additionally, it expands its capabilities to facilitate the download of content from various online sources such as YouTube, PBS, Libgen, and even direct download URLs making content acquisition very straightforward.
+DiscordMovieBot is a simple Discord bot created to provide users with a robust set of tools for efficient torrent management and seamless online stream searching, all within the confines of a Discord server. The bot connects to a qbittorrent seedbox and offers your Discord users a user-friendly interface for easily discovering and acquiring movies and TV shows, or adding existing torrents from magnet links. DiscordMovieBot is simple in its design and does not use the Radarr/Jackett suite of software as a torrent collection management system. Instead, it employs custom-written wrappers for 1337x and yts, along with the qbittorrent python API, to automatically manage torrents directly to and from a qBittorrent instance.
 
 #
 
@@ -15,7 +15,7 @@ DiscordMoviebot is a Discord bot designed to help users with an extensive set of
 #
 
   <div style="display: inline-block;">
-    <p>Using /stream to find online movie/series streams</p>
+    <p>Using /stream to find online movie/series streams:</p>
       <img src="https://github.com/JakeTurner616/DiscordMovieBot/blob/e9ee7c7a065fe25e0bff433976f7bd7346adc440/docs/demo2.gif" alt="/stream demo">    
   </div>
 </div>
@@ -23,9 +23,9 @@ DiscordMoviebot is a Discord bot designed to help users with an extensive set of
 ## Pre-Install Setup
 qBittorrent setup:
 
-1) Ensure that qBittorrent WebUI access with authentication is configured on the seedbox, as sessions are managed automatically since [@8992c](https://github.com/JakeTurner616/DiscordMovieBot/commit/8992c8a2d2ff3434781b366aa3e9897d12699645).
+1) Ensure that qBittorrent WebUI access with authentication is configured on the seedbox by enabling the webui feature and adding a user with a password.
 
-3) Include qBittorrent categories for each media type that can be torrented: "movie", "tv", "fitgirl repack" each with a specified path to their desired download location. Take note of the movie and TV paths you choose here as they will be required when configuring the local `config.ini` variables.
+3) Add qBittorrent categories for each media type that can be torrented via the leftmost ui panel: "movie", "tv", "fitgirl repack" each with a specified path to their desired download location.
 
 Discord bot setup:
 
@@ -35,10 +35,13 @@ Discord bot setup:
 
 ## DiscordMovieBot Installation
 
-1) Setup a venv:
+1) Clone and cd into the repo:
+  `git clone https://github.com/JakeTurner616/DiscordMovieBot && cd DiscordMovieBot`
+
+3) Setup a venv:
   `python -m venv discordmoviebot`
 
-2) Activate the discordmoviebot venv:
+4) Activate the discordmoviebot venv:
    
     On Windows:
      `.\discordmoviebot\Scripts\activate`
@@ -46,10 +49,10 @@ Discord bot setup:
     On macOS/Linux:
       `source discordmoviebot/bin/activate`
 
-3) Install the requirements:
+5) Install the requirements:
    `pip install -r requirements.txt`
 
-4) Customize local configuration values within `config.ini`.
+6) Customize local configuration values within `config.ini`.
 
 # Deploying
 

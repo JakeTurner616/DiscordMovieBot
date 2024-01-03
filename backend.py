@@ -1611,8 +1611,9 @@ def libgen(search_query):
     result = scrape_libgen(search_query)
     return jsonify(result)
 from urllib.parse import urlparse, unquote
-def download_book_from_mirror(link, mirror):
-    base_url = f'{mirror}book/index.php?md5='
+def download_book_from_mirror(link, lib_mirror):
+    base_url = f'{lib_mirror}book/index.php?md5='
+    print(f"Book base url: {base_url}")
     link = link.replace(base_url, 'http://library.lol/main/')
     print(f"Link: {link}")
 
@@ -1658,7 +1659,7 @@ def download_book_from_mirror(link, mirror):
 def libgen_download():
     link = request.args.get('link', '')
     
-    for mirror in mirrors:
+    for mirror in lib_mirrors:
         result = download_book_from_mirror(link, mirror)
         if result['status'] == 'success':
             return jsonify(result)

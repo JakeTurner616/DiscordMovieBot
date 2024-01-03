@@ -1166,6 +1166,9 @@ async def on_reaction_add(reaction, user):
         if reaction.message.id in download_tasks:
             # Start the download process
             await start_book_download(reaction.message, download_tasks[reaction.message.id])
+
+    data = []
+
     if user.id in search_responses:
         data = search_responses[user.id]
         print(f"User {user} reacted with {reaction.emoji} to a message.")

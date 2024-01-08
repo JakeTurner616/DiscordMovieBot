@@ -1,3 +1,13 @@
+<div style="display: flex; align-items: flex-start;">
+  <div style="flex: 1;">
+  </div>
+  <div>
+    <a href="https://github.com/JakeTurner616/DiscordMovieBot/">
+      <img align="right" width="224" height="224" src="https://raw.githubusercontent.com/JakeTurner616/DiscordMovieBot/main/docs/logo.png">
+    </a>
+  </div>
+</div>
+
 # 🎬 DiscordMovieBot - Ultimate content searching, suggestion, acquisition, and organization system 🌐
 
 DiscordMovieBot is a simple Discord bot created to provide users with a robust set of tools for efficient torrent management and seamless online stream searching, all within the confines of a Discord server. The bot establishes a connection with a qbittorrent seedbox, providing your Discord users with an intuitive interface to effortlessly explore and obtain movies, TV shows, books, or add existing torrents via magnet links. DiscordMovieBot is simple in its design and does not use the Radarr/Jackett suite of software as a torrent collection management system. Instead, it utilizes custom api wrappers of popular trackers such as [1337x.to](https://1337x.to), [YIFY](https://yts.mx), [torrentdownload](https://torrentdownload.info), [Library Genesis](https://libgen.is/), and others, in conjunction with the qbittorrent Python API. This approach enables seamless, automated management of torrents directly to and from a qBittorrent instance.

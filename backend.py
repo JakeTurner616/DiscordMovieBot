@@ -303,7 +303,6 @@ import cloudscraper
 # List of 1337x mirrors with '*' indicating CloudScraper usage
 mirrors = [
 
-    "https://www.1337x.to/",
     "https://www.1337xx.to/",
     "https://www.1377x.to/",
     "https://1337x.unblockit.foo/", # This one and down are mirrors ran by the public
@@ -392,7 +391,7 @@ def get_torrents():
             }
 
             if image_src:
-                torrent_info["cover_image_url"] = f'https:{image_src}'
+                torrent_info["cover_image_url"] = f'https://1337xx.to{image_src}'
 
             torrents.append(torrent_info)
 
@@ -432,7 +431,7 @@ def get_tv_torrents():
     print({formatted_query})
     
     mirrors = [
-        "https://www.1337x.to/",
+        #"https://www.1337x.to/", This mirror's img cdn is acting up
         "https://www.1337xx.to/",
         "https://www.1377x.to/",
         "https://1337x.unblockit.foo/", # This one and down are mirrors ran by the public

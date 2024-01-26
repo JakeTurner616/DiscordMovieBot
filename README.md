@@ -70,10 +70,10 @@ DiscordMovieBot is a simple Discord bot created to provide users with a robust s
 ### Movie Commands
 
 - `/search <Movie Title>`
-  - Searches the 1337x torrent search engine API and displays movie results as selectable embeds.
+  - Searches the yts torrent search engine API and displays movie results as selectable embeds.
 
 - `/altsearch <Movie Title>`
-  - Searches the yts torrent search engine API and displays movie results as selectable embeds.
+  - Searches the 1337x torrent search engine API and displays movie results as selectable embeds.
 
 - `/magnet <Magnet link> <category>`
   - Manually adds a magnet link to the torrent client. Must include a torrent category.

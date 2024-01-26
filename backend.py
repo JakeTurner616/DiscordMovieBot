@@ -852,22 +852,17 @@ yts_mirrors = [
 
 @app.route('/torrents-yts', methods=['GET'])
 def get_movie_info():
-    # Get the movie title from the query parameter
     movie_title = request.args.get('search')
+    movie_urls, mirror_used = find_movie_on_mirrors(movie_title)
 
-    # Attempt to find the movie on YTS using mirrors
-    movie_url, mirror_used = find_movie_on_mirrors(movie_title)
-
-    if movie_url == "Movie not found on YTS.":
+    if movie_urls == ["Movie not found on YTS."]:
         return jsonify([{"error": "Movie not found on YTS"}])
 
-    try:
-        # Get magnet link, image URL, and other information
-        magnet_link, image_link, title = get_magnet_link_seeds_size_cover(movie_url)
-
-        # Return the results as a list of dictionaries, including the mirror used
-        result = [
-            {
+    results = []
+    for movie_url in movie_urls:
+        try:
+            magnet_link, image_link, title = get_magnet_link_seeds_size_cover(movie_url)
+            result = {
                 "mirror_used": mirror_used,
                 "cover_image_url": image_link,
                 "leeches": "NA",
@@ -876,11 +871,11 @@ def get_movie_info():
                 "size": "NA",
                 "title": title
             }
-        ]
-        return jsonify(result)
+            results.append(result)
+        except Exception as e:
+            continue  # Optionally log this error
 
-    except Exception as e:
-        return jsonify([{"error": str(e)}])
+    return jsonify(results)
 
 def find_movie_on_mirrors(movie_title):
     for mirror in yts_mirrors:
@@ -899,11 +894,9 @@ def get_movie_url(movie_title, mirror):
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, 'html.parser')
-        movie_link = soup.find('a', class_='browse-movie-link')
-        if movie_link:
-            movie_url = movie_link['href']
-            return movie_url
-    return "Movie not found on YTS."
+        movie_links = soup.find_all('a', class_='browse-movie-link', limit=5)
+        return [link['href'] for link in movie_links if link] if movie_links else ["Movie not found on YTS."]
+    return ["Movie not found on YTS."]
 
 def get_magnet_link_seeds_size_cover(url):
     # Start a new instance of the Chrome web browser

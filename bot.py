@@ -1403,9 +1403,9 @@ async def pbsdownload(ctx: discord.Interaction, video_url: Option(str, descripti
 
 # Define list of commands
 commands_list = [
-    "**/search <Movie Title>** - Searches a torrent Search engine API and displays movie results as selectable embeds.",
-    "**/altsearch <Movie Title>** - Searches torrent Search engine on yts.mx API and displays movie results as selectable embeds.",
-    "**/magnet <Magnet link> <category>** - Manually add a magnet link to the torrent client. Must include either a category",
+    "**/search <Movie Title>** - Searches a torrent Search engine on yts and displays movie results as selectable embeds.",
+    "**/altsearch <Movie Title>** - Searches torrent Search engine on 1337x and displays movie results as selectable embeds.",
+    "**/magnet <Magnet link> <category>** - Manually add a magnet link to the torrent client. Must include a category",
     "**/delete** - Deletes all torrents and all previous search result embeds.",
     "**/epsearch <TV Show Title>** - Searches for and displays an episode list for each season of a given TV show.",
     "**/tvsearch <TV Show Title SnnEnn>** - Searches a torrent Search engine API and displays TV results as selectable embeds.",

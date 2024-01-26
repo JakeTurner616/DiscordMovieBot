@@ -369,11 +369,11 @@ def get_first_movie_year(search_query):
         return None  # Return None if API request fails
 
 @bot.slash_command(
-    name="altsearch",
+    name="search",
     description="Search for movies on YTS.mx",
     guild_ids=guilds_list
 )
-async def altsearch(ctx, 
+async def search(ctx, 
                    search_query: Option(str, description="Specify the title of the movie you want to search for.", required=True)):
     """Sends a request and returns JSON response as selectable embedded messages."""
     # Send an initial "Searching for {Movie Title}" embed
@@ -431,9 +431,9 @@ async def altsearch(ctx,
         except Exception as e:
             await ctx.send(f"An error occurred: {e}")
 
-@bot.slash_command(name="search", description="Search for movies by title", guild_ids=guilds_list
+@bot.slash_command(name="altsearch", description="Search for movies by title on a 1337x mirror", guild_ids=guilds_list
 )
-async def search(ctx, 
+async def altsearch(ctx, 
                 title: Option(str, description="Specify the title of the movie you want to search for.", required=True)):
     # Define the initial embed for the "Searching for..." message
     initial_embed = discord.Embed(

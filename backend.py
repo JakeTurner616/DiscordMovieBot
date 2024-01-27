@@ -889,7 +889,7 @@ def find_movie_on_mirrors(movie_title):
 
 def get_movie_url(movie_title, mirror):
     movie_title_url = movie_title.replace(' ', '-').lower()
-    url = f"{mirror}browse-movies/{movie_title_url}/all/all/0/featured/0/all"
+    url = f"{mirror}browse-movies/{movie_title_url}/all/all/0/likes/0/all"
 
     response = requests.get(url, headers=headers)
     if response.status_code == 200:

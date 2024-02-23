@@ -102,6 +102,9 @@ DiscordMovieBot is a simple Discord bot created to provide users with a robust s
 
 - `/pbsdownload <video_url>`
   - Downloads content from pbs.org or any PBS site.
+ 
+> [!NOTE]
+> If you're looking for code to programmatically find and download e-books and pdf files with more control, check out [Infinity Library](https://github.com/JakeTurner616/Infinity-Library). It's a Java desktop program designed to easily locate and obtain e-textbooks in a variety of formats from mirrors across the internet.
 
 - `/booksearch <title> <fiction/non-fiction>`
   - Searches and downloads books from libgen.

@@ -97,9 +97,6 @@ DiscordMovieBot is a simple Discord bot created to provide users with a robust s
 
 ### Streaming and Download Commands
 
-- `/stream <query> <media_type> <optional download bool>`
-  - Generates a link to stream any movie or show with an optional argument for basic downloading logic.
-
 - `/youtube <YouTube title or link>`
   - Downloads a video from YouTube either from a link or through a search.
 

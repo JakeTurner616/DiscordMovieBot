@@ -5,7 +5,7 @@ import requests
 import shutil
 import subprocess
 from bs4 import BeautifulSoup
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request
 from qbittorrent import Client
 from pytube import YouTube
 from selenium import webdriver
@@ -45,7 +45,7 @@ headers = {
 
 @app.route('/')
 def index():
-    return render_template('index.html', config=config._sections)
+    return 'Bot backend is running'
 
 @app.route('/api/config', methods=['POST'])
 def update_config():

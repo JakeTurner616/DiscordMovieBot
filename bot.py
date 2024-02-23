@@ -1263,7 +1263,6 @@ commands_list = [
     "**/tvsearch <TV Show Title SnnEnn>** - Searches a torrent Search engine API and displays TV results as selectable embeds.",
     "**/advtvsearch <Movie Title>** - Searches torrent Search engine on torrentdownload.info and displays TV results as selectable embeds.",
     "**/status** - Shows all active torrents and allows for individual deletion of torrents.",
-    "**/stream <query> <media_type> <optional download bool>** - Generate a link to stream any movie or show with an optional argument for basic downloading logic.", #
     "**/youtube <YoutTube title or link>** - Downloads a video from youtube either from a link or through a search.",
     "**/pbsdownload <video_url>** - Download content from pbs.org or any pbs site.", 
     "**/booksearch <title> <fiction/non-fiction>** - Search and download books from libgen.", 

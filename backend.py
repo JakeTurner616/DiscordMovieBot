@@ -1,33 +1,22 @@
-import os
-import re
-import subprocess
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from flask import Flask, jsonify, request, render_template
-import requests
-from bs4 import BeautifulSoup
-from urllib.parse import urljoin, urlparse
 import configparser
-from qbittorrent import Client
-from requests import RequestException, get
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from pytube import YouTube
-from youtube_search import YoutubeSearch
-from flask import Flask, request, jsonify
-import yt_dlp
 import os
 import re
-import subprocess
+import requests
 import shutil
-from urllib.parse import quote, urlparse, urlunparse
+import subprocess
+from bs4 import BeautifulSoup
+from flask import Flask, jsonify, request, render_template
+from qbittorrent import Client
+from pytube import YouTube
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+from urllib.parse import quote, urlparse, urljoin, urlunparse
+from youtube_search import YoutubeSearch
+import yt_dlp
 
 # Load the initial configuration
 config = configparser.ConfigParser()
@@ -141,11 +130,6 @@ def download_pbs():
 
     except Exception as e:
         return jsonify({"error": f"An error occurred during download: {str(e)}"}), 500
-
-
-
-
-from selenium.webdriver.common.action_chains import ActionChains
 
 def click_element(driver, element):
     try:
@@ -508,10 +492,6 @@ def get_tv_torrents():
     
     return jsonify(torrents)
 
-from flask import Flask, request, jsonify
-import requests
-from bs4 import BeautifulSoup
-
 def scrape_with_selenium(search_query):
     try:
         # Set up Chrome WebDriver with headless option
@@ -633,211 +613,8 @@ def advtv():
     else:
         return jsonify({"error": "Failed to retrieve search results.", "status_code": response.status_code}), 500  
 
-def extract_fifth_url_from_bottom(source_url):
-    try:
-        response = requests.get(source_url)
 
-        if response.status_code == 200:
-            soup = BeautifulSoup(response.text, 'html.parser')
-            url_pattern = re.compile(r'https://img\.wonkychickens\.org[^\s"\']+', re.I)
-            all_urls = re.findall(url_pattern, str(soup))
-            if len(all_urls) >= 5:
-                # Cleanse and parse the URL
-                fifth_url_from_bottom = urlparse(all_urls[-5])
-                # Further cleanse the URL to remove extra characters
-                cleansed_url = fifth_url_from_bottom.geturl().rstrip('\\')
-                return cleansed_url
-        return "N/A"
-    except Exception as e:
-        return "N/A"
-
-def extract_magnet_link(source_url, index):
-    try:
-        response = requests.get(source_url)
-
-        if response.status_code == 200:
-            soup = BeautifulSoup(response.text, 'html.parser')
-            magnet_links = soup.select(f'div.tgxtablerow:nth-child({index + 2}) > div:nth-child(5) > a:nth-child(2)')
-            if magnet_links:
-                return magnet_links[0]['href']
-        return "N/A"
-    except Exception as e:
-        return "N/A"
-
-def extract_fifth_url_from_bottom(source_html):
-    try:
-        soup = BeautifulSoup(source_html, 'html.parser')
-        url_pattern = re.compile(r'https://img\.wonkychickens\.org[^\s"\']+', re.I)
-        all_urls = re.findall(url_pattern, str(soup))
-        if len(all_urls) >= 5:
-            fifth_url_from_bottom = all_urls[-5]
-            # Further cleanse the URL to remove extra characters
-            cleansed_url = fifth_url_from_bottom.rstrip('\\')
-            return cleansed_url
-        return "N/A"
-    except Exception as e:
-        return "N/A"
-
-def extract_magnet_link(source_html, index):
-    try:
-        soup = BeautifulSoup(source_html, 'html.parser')
-        magnet_links = soup.select(f'div.tgxtablerow:nth-child({index + 2}) > div:nth-child(5) > a:nth-child(2)')
-        if magnet_links:
-            return magnet_links[0]['href']
-        return "N/A"
-    except Exception as e:
-        return "N/A"
-
-# Function to search for a movie on IMDb and retrieve its IMDb link
-def search_movie_imdb_link(movie_title):
-
-    
-    # Use regular expression to find the first instance of 4 consecutive numbers
-    match = re.search(r'\d{4}', movie_title)
-    if match:
-        # Trim the title to remove everything after the first 4 consecutive numbers
-        movie_title = movie_title[:match.start()]
-    
-    # Encode the modified movie title for the URL
-    movie_title_encoded = movie_title.replace(" ", "%20")
-    
-    # IMDb search URL
-    url = f"https://www.imdb.com/find/?q={movie_title_encoded}&s=tt&ttype=ft&ref_=fn_ft"
-    
-    try:
-        # Send a GET request to IMDb
-        response = requests.get(url, headers=headers)
-        response.raise_for_status()
         
-        # Parse the HTML content
-        soup = BeautifulSoup(response.text, 'html.parser')
-        
-        # Find the first movie IMDb link element
-        imdb_link_element = soup.select_one('li.ipc-metadata-list-summary-item:nth-child(1) > div:nth-child(2) > div:nth-child(1) > a:nth-child(1)')
-        
-        if imdb_link_element:
-            # Extract the href attribute to get the IMDb link
-            imdb_link = imdb_link_element['href']
-            return f"https://www.imdb.com{imdb_link}"
-        else:
-            return "IMDb link not found."
-    
-    except requests.exceptions.RequestException as e:
-        return f"Error: {str(e)}"
-
-# Function to acquire the cover image URL from the IMDb movie page
-def get_movie_cover_image(imdb_url):
-
-
-    if imdb_url == "IMDb link not found.":
-        return ''
-    else:
-
-        try:
-
-            # Send a GET request to the IMDb movie page
-            response = requests.get(imdb_url, headers=headers)
-            response.raise_for_status()
-            
-            # Parse the HTML content of the movie page
-            soup = BeautifulSoup(response.text, 'html.parser')
-            
-            # Find the cover image element
-            cover_image_element = soup.select_one('.ipc-media--poster-l img')
-            
-            if cover_image_element:
-                # Extract the src attribute to get the cover image URL
-                cover_image_url = cover_image_element['src']
-                
-                # Use regex to ensure the URL ends with "@._V1_.jpg"
-
-                cover_image_url = re.sub(r'(@\.\w{2,4})', '@._V1_.jpg', cover_image_url)
-                
-                return cover_image_url
-            else:
-                return ''
-        
-        except requests.exceptions.RequestException as e:
-            return f"Error: {str(e)}"
-
-def trim_string_after_year(input_string):
-    # Define a regular expression pattern to match a year (4 consecutive digits).
-    year_pattern = r'\d{4}'
-
-    # Find the first occurrence of a year in the input string.
-    match = re.search(year_pattern, input_string)
-
-    if match:
-        # Get the index of the year's starting position.
-        year_start = match.start()
-
-        # Trim the string to everything before the year.
-        trimmed_string = input_string[:year_start]
-
-        return trimmed_string
-    else:
-        # If no year is found, return the original string.
-        return input_string
-
-def torrent_galaxy_local(source_html):
-    base_url = 'https://torrentgalaxy.to'
-    try:
-        soup = BeautifulSoup(source_html, 'html.parser')
-        elements = soup.find_all('a', class_='txlight', title=True, href=True)
-        result_list = []
-
-        for i, element in enumerate(elements[:8]):
-            href = element['href']
-            individual_page_url = urljoin(base_url, href)
-            title = element['title']
-
-            if "comments" not in title.lower():
-                file_size_element = soup.select(f'div.tgxtablerow:nth-child({i+2}) > div:nth-child(8) > span:nth-child(1)')
-                file_size = file_size_element[0].get_text() if file_size_element else "N/A"
-
-                sl_element = soup.select(f'div.tgxtablerow:nth-child({i+2}) > div:nth-child(11)')
-                sl_value = sl_element[0].get_text() if sl_element else "N/A"
-
-                # Extract seed and leech values from sl_value
-                seed_value, leech_value = extract_seed_and_leech(sl_value)
-
-                magnet_link = extract_magnet_link(source_html, i)
-
-
-
-                imdb_link = search_movie_imdb_link(title)
-                cover_image_url = get_movie_cover_image(imdb_link)
-
-                print(f"Cover Image URL: {cover_image_url}")
-
-                result_list.append({
-                    "title": title,
-                    "link": individual_page_url,
-                    "magnet_link": magnet_link,
-                    "size": file_size,
-                    "seeds": seed_value,
-                    "leeches": leech_value,
-                    "cover_image_url": cover_image_url
-                })
-
-        os.remove("source.html")       
-
-        return jsonify(result_list)  # Return the list directly
-
-    except Exception as e:
-        print("An error occurred:", str(e))
-
-def extract_seed_and_leech(sl_value):
-    # Parse seed and leech values from sl_value
-    seed_leech_pattern = r'\[(\d+)/(\d+)\]'
-    match = re.search(seed_leech_pattern, sl_value)
-    if match:
-        seed_value = match.group(1)
-        leech_value = match.group(2)
-        return seed_value, leech_value
-    else:
-        return "N/A", "N/A"
-
 # List of YTS mirrors sorted by availability
 yts_mirrors = [
     "https://yts.mx/",
@@ -1347,51 +1124,9 @@ def move_file_to_network(local_file_path, video_link):
 
     # Move the file to the network path
     shutil.move(local_file_path, network_file_path)
-
     print(f"File moved to {network_file_path}")
-@app.route('/download_stream', methods=['GET'])
-def download_stream():
-    # Get the URL from the request parameters
-    url = request.args.get('url')
+    
 
-    if not url:
-        return jsonify({"error": "URL parameter is missing"}), 400
-
-    # Create a new instance of the Chrome driver
-    chrome_options = Options()
-    chrome_options.add_argument(f"{headers}")
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--disable-gpu")
-    driver = webdriver.Chrome(options=chrome_options)
-
-    try:
-        # Load the web page
-        driver.get(url)
-
-        # Explicitly wait for the video element to be present on the page
-        video_element = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.TAG_NAME, 'video'))
-        )
-
-        # Extract the value of the src attribute
-        video_src = video_element.get_attribute('src')
-
-        # Extract the media name from the HTML page title
-        media_name = driver.title
-
-        # Print the video link and media name
-        print("Video Link:", video_src)
-        print("Media Name:", media_name)
-
-        # Download the file based on the type (movie or TV show) and media name
-        download_file(video_src, media_name, "downloads")
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-    finally:
-        # Close the browser window
-        driver.quit()
-
-    return jsonify({"success": "File download initiated"}), 200
 
 # List of mirrors to try
 MIRRORS = ["https://annas-archive.org/", "https://annas-archive.gs", "https://annas-archive.se"]

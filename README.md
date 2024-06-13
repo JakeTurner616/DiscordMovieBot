@@ -1,12 +1,5 @@
-<div style="display: flex; align-items: flex-start;">
-  <div style="flex: 1;">
-  </div>
-  <div>
-    <a href="https://github.com/JakeTurner616/DiscordMovieBot/">
-      <img align="right" width="224" height="224" src="https://raw.githubusercontent.com/JakeTurner616/DiscordMovieBot/main/docs/logo.png">
-    </a>
-  </div>
-</div>
+> [!WARNING]
+> The previous version of this project faced significant issues with maintainability and scope. Instead of continuing to fix those issues, I have re-written the main features into a new program called [DiscordTorrentManager](https://github.com/JakeTurner616/DiscordTorrentManager). This new version allows you to search and download content directly to a movie folder from a Discord application, making it compatible with Plex, Jellyfin, VLC, etc.
 
 # 🎬 DiscordMovieBot - Ultimate content searching, suggestion, acquisition, and organization system 🌐
 
